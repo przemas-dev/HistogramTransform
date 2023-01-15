@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistogramTransform", "HistogramTransform.csproj", "{CAA8B3E2-D0AA-44A9-B10D-93AAC5611316}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAA8B3E2-D0AA-44A9-B10D-93AAC5611316}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAA8B3E2-D0AA-44A9-B10D-93AAC5611316}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAA8B3E2-D0AA-44A9-B10D-93AAC5611316}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAA8B3E2-D0AA-44A9-B10D-93AAC5611316}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
