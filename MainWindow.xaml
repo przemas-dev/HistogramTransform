@@ -5,8 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HistogramTransform"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="1080" Width="1920" WindowState="Maximized">
+    <Grid Height="1062" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="7*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="4*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <GroupBox Grid.Row="0" Padding="0" Grid.Column="0" Margin="16">
+            <StackPanel Orientation="Vertical" Height="880" >
+                <Button Click="Button_Click" Margin="0" >Otwórz obraz</Button>
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Plik:"></Label>
+                    <TextBox x:Name="fileTextBox" Height="18" Grid.Column="1" IsReadOnly="True"></TextBox>
+                </Grid>
+                <Label x:Name="fileSizeLabel" Content="Rozmiar:"/>
+                <Button Click="Button_Click_1">Zapisz obraz</Button>
+            </StackPanel>
+        </GroupBox>
+        <Image x:Name="imagePreview" Grid.Column="1" Grid.Row="0" Stretch="UniformToFill" Margin="16"/>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+            <local:OperationBlock Width="100"></local:OperationBlock>
+        </StackPanel>
+
 
     </Grid>
 </Window>
