@@ -17,7 +17,7 @@
         </Grid.ColumnDefinitions>
         <GroupBox Grid.Row="0" Padding="0" Grid.Column="0" Margin="16">
             <StackPanel Orientation="Vertical" Height="880" >
-                <Button Click="Button_Click" Margin="0" >Otwórz obraz</Button>
+                <Button Click="Button_Click" Margin="4" >Otwórz obraz</Button>
                 <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -27,12 +27,13 @@
                     <TextBox x:Name="fileTextBox" Height="18" Grid.Column="1" IsReadOnly="True"></TextBox>
                 </Grid>
                 <Label x:Name="fileSizeLabel" Content="Rozmiar:"/>
-                <Button Click="Button_Click_1">Zapisz obraz</Button>
+                <Button Margin="4" Click="Button_Click_1">Zapisz obraz</Button>
                 <GroupBox Header="Histogram">
                     <Border BorderThickness="1" Width="258"  BorderBrush="Black">
                         <Image Height="256" Width="256" x:Name="histogramImage"></Image>
                     </Border>
                 </GroupBox>
+                <Button Margin="4" Content="Zapisz histogram" Click="Button_Click_2"></Button>
             </StackPanel>
         </GroupBox>
         <Image x:Name="imagePreview" Grid.Column="1" Grid.Row="0" Stretch="UniformToFill" Margin="16"/>

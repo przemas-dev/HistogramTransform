@@ -25,6 +25,7 @@ namespace HistogramTransform
         }
 
         private BitmapImage _bitmapImage;
+        private Histogram _histogram;
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -40,27 +41,46 @@ namespace HistogramTransform
                 fileSizeLabel.Content = $"Rozmiar: {_bitmapImage.PixelWidth}px x {_bitmapImage.PixelHeight}px";
             }
 
-            var histogram = new Histogram(_bitmapImage);
-            histogramImage.Source = histogram.GetBitmapImage();
+            _histogram = new Histogram(_bitmapImage);
+            histogramImage.Source = _histogram.GetBitmapImage();
 
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            var saveDialog = new SaveFileDialog();
-            saveDialog.Title = "Zapisz obraz jako";
-            saveDialog.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp";
-            if (_bitmapImage != null)
+            if (_bitmapImage == null) return;
+            var saveDialog = new SaveFileDialog
             {
-                if (saveDialog.ShowDialog() == true)
+                Title = "Zapisz obraz jako",
+                Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp"
+            };
+            if (saveDialog.ShowDialog() == true)
+            {
+                var jpg = new JpegBitmapEncoder();
+                jpg.Frames.Add(BitmapFrame.Create(_bitmapImage));
+                try
                 {
-                    var jpg = new JpegBitmapEncoder();
-                    jpg.Frames.Add(BitmapFrame.Create(_bitmapImage));
-                    using (var fileStream = File.Create(saveDialog.FileName))
-                    {
-                        jpg.Save(fileStream);
-                    }
+                    using var fileStream = File.Create(saveDialog.FileName);
+                    jpg.Save(fileStream);
                 }
+                catch (IOException ex)
+                {
+                    MessageBox.Show(ex.Message, "Błąd zapisu pliku", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if (_bitmapImage == null) return;
+            var saveDialog = new SaveFileDialog
+            {
+                Title = "Zapisz obraz jako",
+                Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp"
+            };
+            if (saveDialog.ShowDialog() == true)
+            {
+                _histogram.SaveHistogramToFile(saveDialog.FileName);
             }
         }
     }

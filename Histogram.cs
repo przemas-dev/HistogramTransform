@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -11,16 +13,17 @@ namespace HistogramTransform
     public class Histogram
     {
 
-        private BitmapSource _bitmapSource;
+        private BitmapSource _ImagebitmapSource;
+        private BitmapSource _histogramBitmapSource;
         private int[] _countValues;
 
         public Histogram(BitmapSource bitmapSource)
         {
-            _bitmapSource = bitmapSource;
+            _ImagebitmapSource = bitmapSource;
             _countValues = new int[256];
-            var stride = _bitmapSource.PixelWidth * 4;
-            var pixels = new byte[_bitmapSource.PixelHeight * stride];
-            _bitmapSource.CopyPixels(pixels, stride, 0);
+            var stride = _ImagebitmapSource.PixelWidth * 4;
+            var pixels = new byte[_ImagebitmapSource.PixelHeight * stride];
+            _ImagebitmapSource.CopyPixels(pixels, stride, 0);
             for (var i = 0; i < pixels.Length; i += 4)
             {
                 var red = pixels[i];
@@ -55,9 +58,25 @@ namespace HistogramTransform
             var colors = new List<Color>() { Colors.LightGray, Colors.Black, Colors.Red };
             var palette = new BitmapPalette(colors);
 
-            var bitmapSource = BitmapSource.Create(
+            _histogramBitmapSource = BitmapSource.Create(
                 width, height, 96, 96, PixelFormats.Indexed8, palette, pixels, stride);
-            return bitmapSource;
+            return _histogramBitmapSource;
+        }
+
+        public void SaveHistogramToFile(string fileName)
+        {
+            var jpg = new JpegBitmapEncoder();
+            jpg.Frames.Add(BitmapFrame.Create(_histogramBitmapSource));
+            try
+            {
+                using var fileStream = File.Create(fileName);
+                jpg.Save(fileStream);
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show(ex.Message, "Błąd zapisu pliku",MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
         }
     }
 }
