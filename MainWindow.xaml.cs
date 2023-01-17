@@ -1,19 +1,11 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HistogramTransform
 {
@@ -22,8 +14,13 @@ namespace HistogramTransform
         public MainWindow()
         {
             InitializeComponent();
-        }
 
+            MouseWheel += MainWindow_MouseWheel;
+        }
+        
+        private Point imageOffset; 
+        private Point startMouse;
+        
         private BitmapImage _bitmapImage;
         private Histogram _histogram;
         private Scale _selectedScale;
@@ -54,6 +51,7 @@ namespace HistogramTransform
 
                 _bitmapImage = new BitmapImage(new Uri(openDialog.FileName));
                 imagePreview.Source = _bitmapImage;
+                imagePreview.RenderTransform = new MatrixTransform();
                 fileTextBox.Text = openDialog.FileName;
                 fileSizeLabel.Content = $"Rozmiar: {_bitmapImage.PixelWidth}px x {_bitmapImage.PixelHeight}px";
                 _histogram = new Histogram(_bitmapImage,_selectedScale);
@@ -109,6 +107,48 @@ namespace HistogramTransform
                 _ => Scale.Logarithmic
             };
             
+        }
+        
+        private void ImagePreview_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (imagePreview.IsMouseCaptured) return;
+            imagePreview.CaptureMouse();
+
+            startMouse = e.GetPosition(border);
+            imageOffset.X = imagePreview.RenderTransform.Value.OffsetX;
+            imageOffset.Y = imagePreview.RenderTransform.Value.OffsetY;
+        }
+        private void ImagePreview_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!imagePreview.IsMouseCaptured) return;
+            imagePreview.ReleaseMouseCapture();
+        }
+
+        private void ImagePreview_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!imagePreview.IsMouseCaptured) return;
+            var point = e.MouseDevice.GetPosition(border);
+
+            var matrix = imagePreview.RenderTransform.Value;
+            matrix.OffsetX = imageOffset.X + (point.X - startMouse.X);
+            matrix.OffsetY = imageOffset.Y + (point.Y - startMouse.Y);
+
+            imagePreview.RenderTransform = new MatrixTransform(matrix);
+        }
+
+        private void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var point = e.MouseDevice.GetPosition(imagePreview);
+            var matrix = imagePreview.RenderTransform.Value;
+            if (e.Delta > 0)
+            {
+                matrix.ScaleAtPrepend(1.1, 1.1, point.X, point.Y);
+            }
+            else
+            {
+                matrix.ScaleAtPrepend(1 / 1.1, 1 / 1.1, point.X, point.Y);
+            }
+            imagePreview.RenderTransform = new MatrixTransform(matrix);
         }
     }
 }

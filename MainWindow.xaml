@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HistogramTransform"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1080" Width="1920" WindowState="Maximized">
+        Title="MainWindow" Height="1080" Width="1920" WindowState="Maximized"
+        MouseWheel="MainWindow_MouseWheel">
     <Grid Height="1062" >
         <Grid.RowDefinitions>
             <RowDefinition Height="7*"></RowDefinition>
@@ -49,7 +50,11 @@
                 <Button Margin="4" Content="Zapisz histogram" Click="Button_Click_2"></Button>
             </StackPanel>
         </GroupBox>
-        <Image x:Name="imagePreview" Grid.Column="1" Grid.Row="0" Stretch="UniformToFill" Margin="16"/>
+        <Border ClipToBounds="True" x:Name="border" Grid.Column="1" Grid.Row="0" Margin="16">
+            <Image x:Name="imagePreview" MouseLeftButtonDown="ImagePreview_MouseLeftButtonDown" 
+                   PreviewMouseLeftButtonUp="ImagePreview_MouseLeftButtonUp" MouseMove="ImagePreview_MouseMove"/>
+        </Border>
+        
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
             <local:OperationBlock Width="100"></local:OperationBlock>
         </StackPanel>
