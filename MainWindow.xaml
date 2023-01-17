@@ -29,9 +29,22 @@
                 <Label x:Name="fileSizeLabel" Content="Rozmiar:"/>
                 <Button Margin="4" Click="Button_Click_1">Zapisz obraz</Button>
                 <GroupBox Header="Histogram">
-                    <Border BorderThickness="1" Width="258"  BorderBrush="Black">
-                        <Image Height="256" Width="256" x:Name="histogramImage"></Image>
-                    </Border>
+                    <StackPanel Margin="0">
+                        <Border Margin="35,8,35,8" BorderThickness="1" Width="258"  BorderBrush="Black">
+                            <Image Height="256" Width="256" x:Name="histogramImage"></Image>
+                        </Border>
+                        <Grid>
+                            <Label Content="Skala: " Margin="36,-1,247,9"/>
+                            <ComboBox SelectionChanged="ComboBox_SelectionChanged" Margin="81,0,127,8" Width="120">
+                                <ComboBoxItem IsSelected="True">Logarytmiczna</ComboBoxItem>
+                                <ComboBoxItem>Liniowa</ComboBoxItem>
+                            </ComboBox>
+                        </Grid>
+                        
+
+                    </StackPanel>
+
+
                 </GroupBox>
                 <Button Margin="4" Content="Zapisz histogram" Click="Button_Click_2"></Button>
             </StackPanel>

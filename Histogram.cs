@@ -16,11 +16,16 @@ namespace HistogramTransform
         private BitmapSource _ImagebitmapSource;
         private BitmapSource _histogramBitmapSource;
         private int[] _countValues;
+        private int _pixelCount;
+        private Scale _scale;
 
-        public Histogram(BitmapSource bitmapSource)
+
+        public Histogram(BitmapSource bitmapSource, Scale scale= Scale.Logarithmic)
         {
+            _scale = scale;
             _ImagebitmapSource = bitmapSource;
             _countValues = new int[256];
+            _pixelCount = _ImagebitmapSource.PixelWidth * _ImagebitmapSource.PixelWidth;
             var stride = _ImagebitmapSource.PixelWidth * 4;
             var pixels = new byte[_ImagebitmapSource.PixelHeight * stride];
             _ImagebitmapSource.CopyPixels(pixels, stride, 0);
@@ -45,9 +50,18 @@ namespace HistogramTransform
 
             var maxCounts = _countValues.Max();
 
+            var logs = _countValues.Select(value => Math.Log10(value)).ToArray();
+            var maxLog = logs.Max();
+            
+            
             for (var x = 0; x < width; x++)
             {
-                var barHeight = _countValues[x] * height / maxCounts * 0.8;
+                var barHeight = _scale switch
+                {
+                    Scale.Logarithmic => logs[x]*height/maxLog * 0.8,
+                    Scale.Linear => _countValues[x] * height / maxCounts * 0.8,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
                 for (var y = 0; y < barHeight; y++)
                 {
                     var index = (height - y - 1) * stride + x;
@@ -78,5 +92,15 @@ namespace HistogramTransform
             }
             
         }
+
+        public void ChangeScale(Scale selectedScale)
+        {
+            _scale = selectedScale;
+        }
+    }
+    public enum Scale
+    {
+        Logarithmic,
+        Linear
     }
 }

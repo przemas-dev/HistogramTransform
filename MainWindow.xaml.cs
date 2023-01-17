@@ -26,6 +26,23 @@ namespace HistogramTransform
 
         private BitmapImage _bitmapImage;
         private Histogram _histogram;
+        private Scale _selectedScale;
+
+        public Scale SelectedScale
+        {
+            get => _selectedScale;
+            private set
+            {
+                if (value == _selectedScale) return;
+                _selectedScale = value;
+                if (_histogram != null)
+                {
+                    _histogram.ChangeScale(_selectedScale);
+                    histogramImage.Source = _histogram.GetBitmapImage();
+                }
+            }
+
+}
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -39,11 +56,9 @@ namespace HistogramTransform
                 imagePreview.Source = _bitmapImage;
                 fileTextBox.Text = openDialog.FileName;
                 fileSizeLabel.Content = $"Rozmiar: {_bitmapImage.PixelWidth}px x {_bitmapImage.PixelHeight}px";
+                _histogram = new Histogram(_bitmapImage,_selectedScale);
+                histogramImage.Source = _histogram.GetBitmapImage();
             }
-
-            _histogram = new Histogram(_bitmapImage);
-            histogramImage.Source = _histogram.GetBitmapImage();
-
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -82,6 +97,18 @@ namespace HistogramTransform
             {
                 _histogram.SaveHistogramToFile(saveDialog.FileName);
             }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            SelectedScale = comboBox.SelectedIndex switch
+            {
+                0 => Scale.Logarithmic,
+                1 => Scale.Linear,
+                _ => Scale.Logarithmic
+            };
+            
         }
     }
 }
