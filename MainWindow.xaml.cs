@@ -17,9 +17,6 @@ using System.Windows.Shapes;
 
 namespace HistogramTransform
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -42,6 +39,10 @@ namespace HistogramTransform
                 fileTextBox.Text = openDialog.FileName;
                 fileSizeLabel.Content = $"Rozmiar: {_bitmapImage.PixelWidth}px x {_bitmapImage.PixelHeight}px";
             }
+
+            var histogram = new Histogram(_bitmapImage);
+            histogramImage.Source = histogram.GetBitmapImage();
+
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

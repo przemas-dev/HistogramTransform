@@ -28,6 +28,11 @@
                 </Grid>
                 <Label x:Name="fileSizeLabel" Content="Rozmiar:"/>
                 <Button Click="Button_Click_1">Zapisz obraz</Button>
+                <GroupBox Header="Histogram">
+                    <Border BorderThickness="1" Width="258"  BorderBrush="Black">
+                        <Image Height="256" Width="256" x:Name="histogramImage"></Image>
+                    </Border>
+                </GroupBox>
             </StackPanel>
         </GroupBox>
         <Image x:Name="imagePreview" Grid.Column="1" Grid.Row="0" Stretch="UniformToFill" Margin="16"/>
