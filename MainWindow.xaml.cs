@@ -14,8 +14,6 @@ namespace HistogramTransform
         public MainWindow()
         {
             InitializeComponent();
-
-            MouseWheel += MainWindow_MouseWheel;
         }
         
         private Point imageOffset; 

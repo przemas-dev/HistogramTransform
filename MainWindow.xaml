@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="1080" Width="1920" WindowState="Maximized"
         MouseWheel="MainWindow_MouseWheel">
-    <Grid Height="1062" >
+    <Grid Height="1062">
         <Grid.RowDefinitions>
             <RowDefinition Height="7*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
@@ -17,44 +17,40 @@
             <ColumnDefinition Width="4*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <GroupBox Grid.Row="0" Padding="0" Grid.Column="0" Margin="16">
-            <StackPanel Orientation="Vertical" Height="880" >
-                <Button Click="Button_Click" Margin="4" >Otwórz obraz</Button>
+            <StackPanel Orientation="Vertical" Height="880">
+                <Button Click="Button_Click" Margin="4">Otwórz obraz</Button>
                 <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Plik:"></Label>
                     <TextBox x:Name="fileTextBox" Height="18" Grid.Column="1" IsReadOnly="True"></TextBox>
                 </Grid>
-                <Label x:Name="fileSizeLabel" Content="Rozmiar:"/>
+                <Label x:Name="fileSizeLabel" Content="Rozmiar:" />
                 <Button Margin="4" Click="Button_Click_1">Zapisz obraz</Button>
                 <GroupBox Header="Histogram">
                     <StackPanel Margin="0">
-                        <Border Margin="35,8,35,8" BorderThickness="1" Width="258"  BorderBrush="Black">
+                        <Border Margin="35,8,35,8" BorderThickness="1" Width="258" BorderBrush="Black">
                             <Image Height="256" Width="256" x:Name="histogramImage"></Image>
                         </Border>
                         <Grid>
-                            <Label Content="Skala: " Margin="36,-1,247,9"/>
+                            <Label Content="Skala: " Margin="36,-1,247,9" />
                             <ComboBox SelectionChanged="ComboBox_SelectionChanged" Margin="81,0,127,8" Width="120">
                                 <ComboBoxItem IsSelected="True">Logarytmiczna</ComboBoxItem>
                                 <ComboBoxItem>Liniowa</ComboBoxItem>
                             </ComboBox>
                         </Grid>
-                        
-
                     </StackPanel>
-
-
                 </GroupBox>
                 <Button Margin="4" Content="Zapisz histogram" Click="Button_Click_2"></Button>
             </StackPanel>
         </GroupBox>
         <Border ClipToBounds="True" x:Name="border" Grid.Column="1" Grid.Row="0" Margin="16">
-            <Image x:Name="imagePreview" MouseLeftButtonDown="ImagePreview_MouseLeftButtonDown" 
-                   PreviewMouseLeftButtonUp="ImagePreview_MouseLeftButtonUp" MouseMove="ImagePreview_MouseMove"/>
+            <Image x:Name="imagePreview" MouseLeftButtonDown="ImagePreview_MouseLeftButtonDown"
+                   PreviewMouseLeftButtonUp="ImagePreview_MouseLeftButtonUp" MouseMove="ImagePreview_MouseMove" />
         </Border>
-        
+
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
             <local:OperationBlock Width="100"></local:OperationBlock>
         </StackPanel>
