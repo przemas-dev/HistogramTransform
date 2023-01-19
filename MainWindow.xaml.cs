@@ -19,9 +19,11 @@ namespace HistogramTransform
         private Point imageOffset; 
         private Point startMouse;
         
-        private BitmapImage _bitmapImage;
+        private BitmapSource _bitmapImage;
         private Histogram _histogram;
         private Scale _selectedScale;
+
+        private LUTOperation _lutOperation;
 
         public Scale SelectedScale
         {
@@ -147,6 +149,18 @@ namespace HistogramTransform
                 matrix.ScaleAtPrepend(1 / 1.1, 1 / 1.1, point.X, point.Y);
             }
             imagePreview.RenderTransform = new MatrixTransform(matrix);
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            if (_bitmapImage == null) return;
+            operationsStackPanel.Children.Add(new OperationBlock());
+            _lutOperation = new LUTOperation(_bitmapImage);
+            _bitmapImage=_lutOperation.GetBitmapImage();
+            imagePreview.Source = _bitmapImage;
+            imagePreview.RenderTransform = new MatrixTransform();
+            _histogram = new Histogram(_bitmapImage, _selectedScale);
+            histogramImage.Source = _histogram.GetBitmapImage();
         }
     }
 }

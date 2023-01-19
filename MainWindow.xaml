@@ -51,9 +51,14 @@
                    PreviewMouseLeftButtonUp="ImagePreview_MouseLeftButtonUp" MouseMove="ImagePreview_MouseMove" />
         </Border>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-            <local:OperationBlock Width="100"></local:OperationBlock>
-        </StackPanel>
+        <GroupBox Header="Operacje" Grid.Column="1" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" Margin="16" Grid.Column="1" Grid.Row="1">
+                <StackPanel x:Name="operationsStackPanel" Orientation="Horizontal">
+                </StackPanel>
+                <Button Margin="28" Click="Button_Click_3">Dodaj</Button>
+            </StackPanel>
+        </GroupBox>
+        
 
 
     </Grid>

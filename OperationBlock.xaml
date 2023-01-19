@@ -6,12 +6,10 @@
              xmlns:local="clr-namespace:HistogramTransform"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="Aquamarine">
+    <Grid Width="180" Background="Aquamarine">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <ComboBox Margin="8">
-                <ComboBoxItem>Operacja 1</ComboBoxItem>
-                <ComboBoxItem>Operacja 2</ComboBoxItem>
-                <ComboBoxItem>Operacja 3</ComboBoxItem>
+                <ComboBoxItem IsSelected="True">Rozciągnięcie histogramu</ComboBoxItem>
             </ComboBox>
             <Label Margin="8" Content="Usuń" Background="White"></Label>
         </StackPanel>
