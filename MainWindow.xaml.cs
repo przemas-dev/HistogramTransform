@@ -45,11 +45,19 @@ namespace HistogramTransform
         {
             var openDialog = new OpenFileDialog();
             openDialog.Title = "Wybierz obraz";
-            openDialog.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Portable Network Graphic (*.png)|*.png";
+            openDialog.Filter = "All supported graphics|*.jpg;*.jpeg;*.png;*.tif;*.tiff;*.bmp|" +
+                                "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
+                                "Portable Network Graphic (*.png)|*.png|" +
+                                "TIFF|*.tif;*.tiff|" +
+                                "Bitmap file|*.bmp";
             if (openDialog.ShowDialog() == true)
             {
-
-                _bitmapImage = new BitmapImage(new Uri(openDialog.FileName));
+                using (var stream = new FileStream(openDialog.FileName, FileMode.Open))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                    var frame = decoder.Frames[0];
+                    _bitmapImage = frame;
+                }
                 imagePreview.Source = _bitmapImage;
                 imagePreview.RenderTransform = new MatrixTransform();
                 fileTextBox.Text = openDialog.FileName;
@@ -65,16 +73,24 @@ namespace HistogramTransform
             var saveDialog = new SaveFileDialog
             {
                 Title = "Zapisz obraz jako",
-                Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp"
+                Filter = "PNG|*.png|" +
+                         "JPEG|*.jpg;*.jpeg|" +
+                         "TIFF|*.tif;*.tiff"
             };
             if (saveDialog.ShowDialog() == true)
             {
-                var jpg = new JpegBitmapEncoder();
-                jpg.Frames.Add(BitmapFrame.Create(_bitmapImage));
+                BitmapEncoder encoder = saveDialog.FilterIndex switch
+                {
+                    1 => new PngBitmapEncoder(),
+                    2 => new JpegBitmapEncoder(),
+                    3 => new TiffBitmapEncoder(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(saveDialog.FilterIndex),saveDialog.FilterIndex, "Cannot find encoder for given filter index")
+                };
+                encoder.Frames.Add(BitmapFrame.Create(_bitmapImage));
                 try
                 {
                     using var fileStream = File.Create(saveDialog.FileName);
-                    jpg.Save(fileStream);
+                    encoder.Save(fileStream);
                 }
                 catch (IOException ex)
                 {
