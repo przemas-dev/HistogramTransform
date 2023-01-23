@@ -12,8 +12,6 @@ namespace HistogramTransform
 {
     public class Histogram
     {
-
-        private BitmapSource _ImagebitmapSource;
         private BitmapSource _histogramBitmapSource;
         private int[] _countValues;
         private int _pixelCount;
@@ -23,19 +21,21 @@ namespace HistogramTransform
         public Histogram(BitmapSource bitmapSource, Scale scale= Scale.Logarithmic)
         {
             _scale = scale;
-            _ImagebitmapSource = bitmapSource;
+            var stride = bitmapSource.PixelWidth * ((bitmapSource.Format.BitsPerPixel + 7) / 8);
+            var size = bitmapSource.PixelHeight * stride;
+            var pixels = new byte[size];
+            bitmapSource.CopyPixels(pixels, stride, 0);
+            
             _countValues = new int[256];
-            _pixelCount = _ImagebitmapSource.PixelWidth * _ImagebitmapSource.PixelWidth;
-            var stride = _ImagebitmapSource.PixelWidth * 4;
-            var pixels = new byte[_ImagebitmapSource.PixelHeight * stride];
-            _ImagebitmapSource.CopyPixels(pixels, stride, 0);
+            _pixelCount = bitmapSource.PixelWidth * bitmapSource.PixelHeight;
+            
             for (var i = 0; i < pixels.Length; i += 4)
             {
-                var red = pixels[i];
+                var red = pixels[i + 2];
                 var green = pixels[i + 1];
-                var blue = pixels[i + 2];
+                var blue = pixels[i];
                 var alpha = pixels[i + 3];
-
+            
                 int value = new[] { red, green, blue }.Max();
                 _countValues[value]++;
             }

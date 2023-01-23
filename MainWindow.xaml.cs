@@ -38,8 +38,7 @@ namespace HistogramTransform
                     histogramImage.Source = _histogram.GetBitmapImage();
                 }
             }
-
-}
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -56,7 +55,7 @@ namespace HistogramTransform
                 {
                     var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
                     var frame = decoder.Frames[0];
-                    _bitmapImage = frame;
+                    _bitmapImage = new FormatConvertedBitmap(frame, PixelFormats.Bgra32,null, 0);
                 }
                 imagePreview.Source = _bitmapImage;
                 imagePreview.RenderTransform = new MatrixTransform();
@@ -122,7 +121,6 @@ namespace HistogramTransform
                 1 => Scale.Linear,
                 _ => Scale.Logarithmic
             };
-            
         }
         
         private void ImagePreview_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
