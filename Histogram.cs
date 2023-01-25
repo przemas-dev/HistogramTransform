@@ -16,6 +16,8 @@ namespace HistogramTransform
         private int[] _countValues;
         private int _pixelCount;
         private Scale _scale;
+        
+        
 
 
         public Histogram(BitmapSource bitmapSource, Scale scale= Scale.Logarithmic)

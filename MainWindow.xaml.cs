@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,28 +21,24 @@ namespace HistogramTransform
         private Point imageOffset; 
         private Point startMouse;
         
-        private BitmapSource _bitmapImage;
         private Histogram _histogram;
-        private Scale _selectedScale;
+        private Scale SelectedScale;
+        private HistogramDisplayChannel SelectedHistogramChannel;
+        public int SelectedOperation { get; set; }
 
-        private LUTOperation _lutOperation;
+        private Stretching _stretching;
 
-        public Scale SelectedScale
-        {
-            get => _selectedScale;
-            private set
-            {
-                if (value == _selectedScale) return;
-                _selectedScale = value;
-                if (_histogram != null)
-                {
-                    _histogram.ChangeScale(_selectedScale);
-                    histogramImage.Source = _histogram.GetBitmapImage();
-                }
-            }
-        }
+        private ImageData StartParams;
+        private BitmapSource StartImage;
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private BitmapSource ActiveImage =>
+            OperationSteps.Count != 0 ? OperationSteps.Last().Output.GetBitmapSource() : StartImage;
+        private ImageData ActiveParams =>
+            OperationSteps.Count != 0 ? OperationSteps.Last().Output : StartParams;
+
+        private List<OperationStep> OperationSteps = new List<OperationStep>();
+
+        private void OpenImage_Click(object sender, RoutedEventArgs e)
         {
             var openDialog = new OpenFileDialog();
             openDialog.Title = "Wybierz obraz";
@@ -55,20 +53,27 @@ namespace HistogramTransform
                 {
                     var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
                     var frame = decoder.Frames[0];
-                    _bitmapImage = new FormatConvertedBitmap(frame, PixelFormats.Bgra32,null, 0);
+                    StartImage = new FormatConvertedBitmap(frame, PixelFormats.Bgra32,null, 0);
                 }
-                imagePreview.Source = _bitmapImage;
+                imagePreview.Source = StartImage;
                 imagePreview.RenderTransform = new MatrixTransform();
                 fileTextBox.Text = openDialog.FileName;
-                fileSizeLabel.Content = $"Rozmiar: {_bitmapImage.PixelWidth}px x {_bitmapImage.PixelHeight}px";
-                _histogram = new Histogram(_bitmapImage,_selectedScale);
-                histogramImage.Source = _histogram.GetBitmapImage();
+                fileSizeLabel.Content = $"Rozmiar: {StartImage.PixelWidth}px x {StartImage.PixelHeight}px";
+                StartParams = StartImage.GetOperationParams();
+                RefreshHistogramPreview();
+                OperationSteps = new List<OperationStep>();
             }
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+
+        private void RefreshHistogramPreview()
         {
-            if (_bitmapImage == null) return;
+            histogramImage.Source = ActiveParams?.GetHistogramImage(SelectedHistogramChannel, SelectedScale);
+        }
+
+        private void SaveImage_Click(object sender, RoutedEventArgs e)
+        {
+            if (ActiveImage == null) return;
             var saveDialog = new SaveFileDialog
             {
                 Title = "Zapisz obraz jako",
@@ -85,7 +90,7 @@ namespace HistogramTransform
                     3 => new TiffBitmapEncoder(),
                     _ => throw new ArgumentOutOfRangeException(nameof(saveDialog.FilterIndex),saveDialog.FilterIndex, "Cannot find encoder for given filter index")
                 };
-                encoder.Frames.Add(BitmapFrame.Create(_bitmapImage));
+                encoder.Frames.Add(BitmapFrame.Create(ActiveImage));
                 try
                 {
                     using var fileStream = File.Create(saveDialog.FileName);
@@ -98,9 +103,9 @@ namespace HistogramTransform
             }
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void SaveHistogram_Click(object sender, RoutedEventArgs e)
         {
-            if (_bitmapImage == null) return;
+            if (ActiveImage == null) return;
             var saveDialog = new SaveFileDialog
             {
                 Title = "Zapisz obraz jako",
@@ -121,7 +126,24 @@ namespace HistogramTransform
                 1 => Scale.Linear,
                 _ => Scale.Logarithmic
             };
+            RefreshHistogramPreview();
         }
+
+        private void HistogramChannel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            SelectedHistogramChannel = comboBox.SelectedIndex switch
+            {
+                0 => HistogramDisplayChannel.Value,
+                1 => HistogramDisplayChannel.Red,
+                2 => HistogramDisplayChannel.Green,
+                3 => HistogramDisplayChannel.Blue,
+                4 => HistogramDisplayChannel.RelativeLuminance,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            RefreshHistogramPreview();
+        }
+        
         
         private void ImagePreview_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -165,16 +187,41 @@ namespace HistogramTransform
             imagePreview.RenderTransform = new MatrixTransform(matrix);
         }
 
-        private void Button_Click_3(object sender, RoutedEventArgs e)
+        private void AddOperation_Click(object sender, RoutedEventArgs e)
         {
-            if (_bitmapImage == null) return;
-            operationsStackPanel.Children.Add(new OperationBlock());
-            _lutOperation = new LUTOperation(_bitmapImage);
-            _bitmapImage=_lutOperation.GetBitmapImage();
-            imagePreview.Source = _bitmapImage;
-            imagePreview.RenderTransform = new MatrixTransform();
-            _histogram = new Histogram(_bitmapImage, _selectedScale);
-            histogramImage.Source = _histogram.GetBitmapImage();
+            if (ActiveImage == null) return;
+            OperationStep newOperation = SelectedOperation switch
+            {
+                0 => new Stretching(ActiveParams),
+                1 => new Equalization(ActiveParams),
+                _ => throw new ArgumentOutOfRangeException(nameof(SelectedOperation), SelectedOperation, "")
+            };
+            operationsStackPanel.Children.Add(new OperationBlock(newOperation, RemoveOperationBlock));
+            OperationSteps.Add(newOperation);
+            RefreshHistogramPreview();
+            imagePreview.Source = ActiveImage;
+        }
+
+        private void NewOperationComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            SelectedOperation = comboBox.SelectedIndex;
+        }
+
+        public void RemoveOperationBlock(OperationBlock operationBlock)
+        {
+            operationsStackPanel.Children.Remove(operationBlock);
+            var operdationToRemove = operationBlock.Operation;
+            var index = OperationSteps.IndexOf(operdationToRemove);
+            OperationSteps.Remove(operdationToRemove);
+            
+            if (OperationSteps.Count != index)
+            {
+                OperationSteps[index].Input = operdationToRemove.Input;
+                OperationSteps.RefreshOperations(index);
+            }
+            RefreshHistogramPreview();
+            imagePreview.Source = ActiveImage;
         }
     }
 }

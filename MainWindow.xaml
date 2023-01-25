@@ -9,7 +9,8 @@
         MouseWheel="MainWindow_MouseWheel">
     <Grid Height="1062">
         <Grid.RowDefinitions>
-            <RowDefinition Height="7*"></RowDefinition>
+            <RowDefinition Height="14*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -18,7 +19,7 @@
         </Grid.ColumnDefinitions>
         <GroupBox Grid.Row="0" Padding="0" Grid.Column="0" Margin="16">
             <StackPanel Orientation="Vertical" Height="880">
-                <Button Click="Button_Click" Margin="4">Otwórz obraz</Button>
+                <Button Click="OpenImage_Click" Margin="4">Otwórz obraz</Button>
                 <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -28,22 +29,29 @@
                     <TextBox x:Name="fileTextBox" Height="18" Grid.Column="1" IsReadOnly="True"></TextBox>
                 </Grid>
                 <Label x:Name="fileSizeLabel" Content="Rozmiar:" />
-                <Button Margin="4" Click="Button_Click_1">Zapisz obraz</Button>
+                <Button Margin="4" Click="SaveImage_Click">Zapisz obraz</Button>
                 <GroupBox Header="Histogram">
                     <StackPanel Margin="0">
                         <Border Margin="35,8,35,8" BorderThickness="1" Width="258" BorderBrush="Black">
                             <Image Height="256" Width="256" x:Name="histogramImage"></Image>
                         </Border>
                         <Grid>
-                            <Label Content="Skala: " Margin="36,-1,247,9" />
-                            <ComboBox SelectionChanged="ComboBox_SelectionChanged" Margin="81,0,127,8" Width="120">
+                            <ComboBox x:Name="histogramChannelCombboBox" SelectionChanged="HistogramChannel_SelectionChanged" Margin="33,0,175,8" Width="120">
+                                <ComboBoxItem IsSelected="True">Wartość Max</ComboBoxItem>
+                                <ComboBoxItem>Czerwony</ComboBoxItem>
+                                <ComboBoxItem>Zielony</ComboBoxItem>
+                                <ComboBoxItem>Niebieski</ComboBoxItem>
+                                <ComboBoxItem>Luminacja</ComboBoxItem>
+                            </ComboBox>
+                            <Label Content="Skala: " Margin="153,-1,130,9" />
+                            <ComboBox SelectionChanged="ComboBox_SelectionChanged" Margin="198,0,10,8" Width="120">
                                 <ComboBoxItem IsSelected="True">Logarytmiczna</ComboBoxItem>
                                 <ComboBoxItem>Liniowa</ComboBoxItem>
                             </ComboBox>
                         </Grid>
                     </StackPanel>
                 </GroupBox>
-                <Button Margin="4" Content="Zapisz histogram" Click="Button_Click_2"></Button>
+                <Button Margin="4" Content="Zapisz histogram" Click="SaveHistogram_Click"></Button>
             </StackPanel>
         </GroupBox>
         <Border ClipToBounds="True" x:Name="border" Grid.Column="1" Grid.Row="0" Margin="16">
@@ -55,7 +63,11 @@
             <StackPanel Orientation="Horizontal" Margin="16" Grid.Column="1" Grid.Row="1">
                 <StackPanel x:Name="operationsStackPanel" Orientation="Horizontal">
                 </StackPanel>
-                <Button Margin="28" Click="Button_Click_3">Dodaj</Button>
+                <ComboBox x:Name="NewOperationComboBox" Margin="10" SelectionChanged="NewOperationComboBox_OnSelectionChanged" Height="24">
+                    <ComboBoxItem IsSelected="True">Rozciągnięcie histogramu</ComboBoxItem>
+                    <ComboBoxItem>Wyrównanie histogramu</ComboBoxItem>
+                </ComboBox>
+                <Button Height="24"  Click="AddOperation_Click">Dodaj</Button>
             </StackPanel>
         </GroupBox>
         
