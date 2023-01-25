@@ -25,6 +25,7 @@ namespace HistogramTransform
                 Equalization equalization => Brushes.Aquamarine,
                 Stretching stretching => Brushes.Green,
                 Shift shift => Brushes.Goldenrod,
+                Grayscale grayscale => Brushes.HotPink,
                 _ => throw new ArgumentOutOfRangeException(nameof(operation))
             };
             operationNameLabel.Content = operation switch
@@ -32,6 +33,7 @@ namespace HistogramTransform
                 Equalization equalization => "Wyrównanie histogramu",
                 Stretching stretching => "Rozciągnięcie histogramu",
                 Shift shift => "Przesunięcie histogramu",
+                Grayscale grayscale => "Skala szarości",
                 _ => throw new ArgumentOutOfRangeException(nameof(operation))
             };
             if (operation is Shift)

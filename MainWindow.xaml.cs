@@ -195,6 +195,7 @@ namespace HistogramTransform
                 0 => new Stretching(ActiveParams),
                 1 => new Equalization(ActiveParams),
                 2 => new Shift(ActiveParams),
+                3 => new Grayscale(ActiveParams),
                 _ => throw new ArgumentOutOfRangeException(nameof(SelectedOperation), SelectedOperation, "")
             };
             operationsStackPanel.Children.Add(new OperationBlock(newOperation, RemoveOperationBlock, RefreshFromOperation));
