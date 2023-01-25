@@ -10,7 +10,7 @@
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <Label x:Name="operationNameLabel" Background="White">Operation Name</Label>
             <Slider x:Name="slider" ValueChanged="Slider_OnValueChanged" Value="0" IsSnapToTickEnabled="True" TickFrequency="1" Visibility="Hidden" Maximum="128" Minimum="-128"></Slider>
-            <Button Margin="8" Content="Usuń" Background="White" Width="50" Click="DeleteButton_Click"></Button>
+            <Button Margin="4" Content="Usuń" Background="White" Width="50" Click="DeleteButton_Click"></Button>
         </StackPanel>
     </Grid>
     

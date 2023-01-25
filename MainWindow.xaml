@@ -10,7 +10,7 @@
     <Grid Height="1062">
         <Grid.RowDefinitions>
             <RowDefinition Height="14*"></RowDefinition>
-            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
