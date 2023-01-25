@@ -194,9 +194,10 @@ namespace HistogramTransform
             {
                 0 => new Stretching(ActiveParams),
                 1 => new Equalization(ActiveParams),
+                2 => new Shift(ActiveParams),
                 _ => throw new ArgumentOutOfRangeException(nameof(SelectedOperation), SelectedOperation, "")
             };
-            operationsStackPanel.Children.Add(new OperationBlock(newOperation, RemoveOperationBlock));
+            operationsStackPanel.Children.Add(new OperationBlock(newOperation, RemoveOperationBlock, RefreshFromOperation));
             OperationSteps.Add(newOperation);
             RefreshHistogramPreview();
             imagePreview.Source = ActiveImage;
@@ -220,6 +221,13 @@ namespace HistogramTransform
                 OperationSteps[index].Input = operdationToRemove.Input;
                 OperationSteps.RefreshOperations(index);
             }
+            RefreshHistogramPreview();
+            imagePreview.Source = ActiveImage;
+        }
+
+        private void RefreshFromOperation(OperationStep operationStep)
+        {
+            OperationSteps.RefreshOperations(operationStep);
             RefreshHistogramPreview();
             imagePreview.Source = ActiveImage;
         }

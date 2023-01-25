@@ -13,4 +13,7 @@ public static class ListExtension
             operationSteps[i].Calculate();
         }
     }
+
+    public static void RefreshOperations(this List<OperationStep> operationSteps, OperationStep startingOperation) =>
+        operationSteps.RefreshOperations(operationSteps.IndexOf(startingOperation));
 }

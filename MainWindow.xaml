@@ -66,6 +66,7 @@
                 <ComboBox x:Name="NewOperationComboBox" Margin="10" SelectionChanged="NewOperationComboBox_OnSelectionChanged" Height="24">
                     <ComboBoxItem IsSelected="True">Rozciągnięcie histogramu</ComboBoxItem>
                     <ComboBoxItem>Wyrównanie histogramu</ComboBoxItem>
+                    <ComboBoxItem>Przesunięcie histogramu</ComboBoxItem>
                 </ComboBox>
                 <Button Height="24"  Click="AddOperation_Click">Dodaj</Button>
             </StackPanel>
