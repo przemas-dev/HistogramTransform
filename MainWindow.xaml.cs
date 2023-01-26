@@ -21,7 +21,6 @@ namespace HistogramTransform
         private Point imageOffset; 
         private Point startMouse;
         
-        private Histogram _histogram;
         private Scale SelectedScale;
         private HistogramDisplayChannel SelectedHistogramChannel;
         public int SelectedOperation { get; set; }
@@ -55,6 +54,7 @@ namespace HistogramTransform
                     var frame = decoder.Frames[0];
                     StartImage = new FormatConvertedBitmap(frame, PixelFormats.Bgra32,null, 0);
                 }
+                OperationSteps.Clear();
                 imagePreview.Source = StartImage;
                 imagePreview.RenderTransform = new MatrixTransform();
                 fileTextBox.Text = openDialog.FileName;
@@ -109,11 +109,29 @@ namespace HistogramTransform
             var saveDialog = new SaveFileDialog
             {
                 Title = "Zapisz obraz jako",
-                Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp"
+                Filter = "PNG|*.png|" +
+                         "JPEG|*.jpg;*.jpeg|" +
+                         "TIFF|*.tif;*.tiff"
             };
             if (saveDialog.ShowDialog() == true)
             {
-                _histogram.SaveHistogramToFile(saveDialog.FileName);
+                BitmapEncoder encoder = saveDialog.FilterIndex switch
+                {
+                    1 => new PngBitmapEncoder(),
+                    2 => new JpegBitmapEncoder(),
+                    3 => new TiffBitmapEncoder(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(saveDialog.FilterIndex),saveDialog.FilterIndex, "Cannot find encoder for given filter index")
+                };
+                encoder.Frames.Add(BitmapFrame.Create((BitmapSource)histogramImage.Source));
+                try
+                {
+                    using var fileStream = File.Create(saveDialog.FileName);
+                    encoder.Save(fileStream);
+                }
+                catch (IOException ex)
+                {
+                    MessageBox.Show(ex.Message, "Błąd zapisu pliku", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
